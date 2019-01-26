@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- <form id="myForm"> -->
+            <h1>فرم دریافت اطلاعات</h1>
+        <ul>
+            <li>
+                <span>نام :</span>
+                <input type="text" id="name" value="" required>
+                <p id="validateName"></p>
+            </li>
+            <li>
+                <span>کد ملی :</span>
+                <input type="text" id="code" value="" required>
+                <p id="validateCode"></p>
+                <p id="validateCodelength"></p>
+            </li>
+
+            <li>
+                <span>تاریخ تولد :</span>
+                <select id="year">
+                </select>
+                <select id="month">
+                    <option value="month">ماه</option>
+                    <option value="01">فروردین</option>
+                    <option value="02">اردیبهشت</option>
+                    <option value="03">خرداد</option>
+                    <option value="04">تیر</option>
+                    <option value="05">مرداد</option>
+                    <option value="06">شهریور</option>
+                    <option value="07">مهر</option>
+                    <option value="08">آبان</option>
+                    <option value="09">آذر</option>
+                    <option value="10">دی</option>
+                    <option value="11">بهمن</option>
+                    <option value="12">اسفند</option>
+                </select>
+                <select id="day">
+                </select>
+                <p id="validateBirthday"></p>
+                <p id="validateAge"></p>
+            </li>
+            <li>
+                <span>موبایل :</span>
+                <input type="text" id="phoneNumber" value="" required>
+                <p id="validatePhoneNumber"></p>
+                <p id="validatePhoneNumberlength"></p>
+            </li>
+            <li>
+                <span>ایمیل :</span>
+                <input type="text" id="email" value="" required>
+                <p id="validateEmail"></p>
+            </li>
+            <li>
+                <button class="submit" onclick="submit()">ثبت اطلاعات</button>
+                <button class="submit" onclick="edit()">ویرایش اطلاعات</button>
+            </li>
+        </ul>
+        <!-- </form> -->
+        <table id="myTable">
+        </table>
+    </div>
+</body>
+<script>
+
+    var yearOptions;
+    for (var i = 1300; i <= 1400; i++) {
+        yearOptions += "<option>" + i + "</option>";
+    }
+    document.getElementById("year").innerHTML = yearOptions;
+
+    var dayOptions;
+    for (var i = 0; i <= 31; i++) {
+        dayOptions += "<option>" + i + "</option>";
+    }
+    document.getElementById("day").innerHTML = dayOptions;
+
+
+    function submit() {
+
+        var name = document.getElementById("name").value;
+        var code = document.getElementById("code").value;
+        var year = document.getElementById("year").value;
+        var phoneNumber = document.getElementById("phoneNumber").value;
+        var email = document.getElementById("email").value;
+        var month = document.getElementById("month").value;
+        var day = document.getElementById("day").value;
+        var birthday = year + "/" + month + "/0" + day;
+
+        var table = document.getElementById("myTable");
+        var row = table.insertRow();
+        var valueName = row.insertCell(0);
+        var valueCode = row.insertCell(1);
+        var valueBirthday = row.insertCell(2);
+        var valuePhoneNumber = row.insertCell(3);
+        var valueEmail = row.insertCell(4);
+        var deleteRow = row.insertCell(5);
+        var editRow = row.insertCell(6);
+
+        var nameValidationResult = "";
+        var codeValidationResult = "";
+        var birthdayValidationResult = "";
+        var phoneNumberValidationResult = "";
+        var emailValidationResult = "";
+        var name_finalResult = "";
+        var code_finalResult = "";
+        var birthday_finalResult = "";
+        var phoneNumber_finalResult = "";
+        var email_finalResult = "";
+
+        nameValidationResult = nameValidator(name);
+        if (nameValidationResult == true) {
+            name_finalResult = name;
+        }
+        codeValidationResult = codeValidator(code);
+        if (codeValidationResult == true) {
+            code_finalResult = code;
+        }
+        birthdayValidationResult = birthdayValidator(birthday);
+        if (birthdayValidationResult == true) {
+            birthday_finalResult = birthday;
+        }
+        phoneNumberValidationResult = phoneNumberValidator(phoneNumber);
+        if (phoneNumberValidationResult == true) {
+            phoneNumber_finalResult = phoneNumber;
+        }
+        emailValidationResult = emailValidator(email);
+        if (emailValidationResult == true) {
+            email_finalResult = email;
+        }
+        if (nameValidationResult && codeValidationResult && birthdayValidationResult && phoneNumberValidationResult && emailValidationResult) {
+            // if you have a form you can use this code to clear field when u click on submit // document.getElementById("myForm").reset();            
+            clearForm();
+
+            valueName.innerHTML = name_finalResult;
+            valueCode.innerHTML = code_finalResult;
+            valueBirthday.innerHTML = birthday_finalResult;
+            valuePhoneNumber.innerHTML = phoneNumber_finalResult;
+            valueEmail.innerHTML = email_finalResult;
+            // deleteRow.innerHTML = "<button onclick='deleteRow()'>حذف اطلاعات</button>";
+            deleteRow.innerHTML = "<button class='tableButton' onclick=\"deleteRow(this)\">حذف اطلاعات</button>";
+            editRow.innerHTML = "<button class='tableButton' onclick=\"editRowFunc(this)\">ویرایش اطلاعات</button>";
+        }
+    }
+    function nameValidator(name) {
+        if (name == "") {
+            document.getElementById("validateName").innerHTML = "لطفا نام را وارد کنید.";
+            return false;
+        } else {
+            document.getElementById("validateName").innerHTML = "";
+            return true;
+        }
+    }
+    function codeValidator(code) {
+        if (code == "") {
+            document.getElementById("validateCode").innerHTML = "لطفا کد ملی را وارد کنید.";
+            return false;
+        } else if (isNaN(code)) {
+            document.getElementById("validateCode").innerHTML = "لطفا برای کد ملی فقط عدد وارد کنید.";
+            return false;
+        } else if (code.length < 10) {
+            document.getElementById("validateCodelength").innerHTML = "کد ملی کمتر از 10 رقم است";
+            return false;
+        } else if (code.length > 10) {
+            document.getElementById("validateCodelength").innerHTML = "کد ملی بیشتر از 10 رقم است";
+            return false;
+        } else {
+            document.getElementById("validateCode").innerHTML = "";
+            document.getElementById("validateCodelength").innerHTML = "";
+            return true;
+        }
+    }
+    function birthdayValidator(birthday) {
+        var miladiBirthYear = 621 + Number(year); //convert year khorshidi to miladi
+        var date = new Date();
+        var thisYear = date.getFullYear();
+        var age = thisYear - miladiBirthYear;
+        if (birthday == 1300 + "/" + "month" + "/0" + 0) {
+            console.log("birthday", birthday);
+            document.getElementById("validateBirthday").innerHTML = "لطفا تاریخ تولد را وارد کنید.";
+            return false;
+        } else if (age < 18) {
+            document.getElementById("validateAge").innerHTML = "سن شما کمتر از 18 سال می باشد.";
+            return false;
+        } else {
+            document.getElementById("validateBirthday").innerHTML = "";
+            document.getElementById("validateAge").innerHTML = "";
+            return true;
+        }
+    }
+    function phoneNumberValidator(phoneNumber) {
+        var check = /\b09/;
+        var result = 0;
+        result = phoneNumber.match(check);
+        if (phoneNumber == "") {
+            document.getElementById("validatePhoneNumber").innerHTML = "لطفا شماره موبایل را وارد کنید.";
+            return false;
+        } else if (result == null) {
+            document.getElementById("validatePhoneNumber").innerHTML = "ساختار شماره موبایل اشتباه است.";
+            return false;
+        } else if (phoneNumber.length < 11) {
+            document.getElementById("validatePhoneNumberlength").innerHTML = "شماره موبایل کمتر از 11 رقم است";
+            return false;
+        } else if (phoneNumber.length > 11) {
+            document.getElementById("validatePhoneNumberlength").innerHTML = "شماره موبایل بیشتر از 11 رقم است";
+            return false;
+        } else {
+            document.getElementById("validatePhoneNumber").innerHTML = "";
+            document.getElementById("validatePhoneNumberlength").innerHTML = "";
+            return true;
+        }
+    }
+    function emailValidator(email) {
+        var filter = /^([a-zA-Z1-9_\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (email == "") {
+            document.getElementById("validateEmail").innerHTML = "لطفا ایمیل را وارد کنید.";
+            return false;
+        } else if (!filter.test(email)) {
+            document.getElementById("validateEmail").innerHTML = "ساختار ایمیل اشتباه است.";
+            return false;
+            // email.focus;
+        } else {
+            document.getElementById("validateEmail").innerHTML = "";
+            return true;
+        }
+    }
+    function clearForm() {
+        document.getElementById("name").value = "";
+        document.getElementById("code").value = "";
+        document.getElementById("year").selectedIndex = "0";
+        document.getElementById("month").selectedIndex = "0";
+        document.getElementById("day").selectedIndex = "0";
+        document.getElementById("phoneNumber").value = "";
+        document.getElementById("email").value = "";
+
+    }
+    function deleteRow(r) {
+        var i = r.parentNode.parentNode.rowIndex;
+        document.getElementById("myTable").deleteRow(i);
+    }
+    var theRow = "";
+    function editRowFunc(a) {
+        var indexOfRow = a.parentNode.parentNode.rowIndex;
+        theRow = a.parentNode.parentNode;
+        document.getElementById("name").value = theRow.cells[0].innerHTML;
+        document.getElementById("code").value = theRow.cells[1].innerHTML;
+        // document.getElementById("birthday").value = theRow.cells[2].innerHTML;
+        document.getElementById("phoneNumber").value = theRow.cells[3].innerHTML;
+        document.getElementById("email").value = theRow.cells[4].innerHTML;
+    }
+    function edit() {
+
+        var name = document.getElementById("name").value;
+        var code = document.getElementById("code").value;
+        var year = document.getElementById("year").value;
+        var phoneNumber = document.getElementById("phoneNumber").value;
+        var email = document.getElementById("email").value;
+        var month = document.getElementById("month").value;
+        var day = document.getElementById("day").value;
+        var birthday = year + "/" + month + "/0" + day;
+        var editednameValidationResult = "";
+        var editedcodeValidationResult = "";
+        var editedbirthdayValidationResult = "";
+        var editedphoneNumberValidationResult = "";
+        var editedemailValidationResult = "";
+        editednameValidationResult = nameValidator(name);
+        editedcodeValidationResult = codeValidator(code);
+        editedphoneNumberValidationResult = phoneNumberValidator(phoneNumber);
+        editedbirthdayValidationResult = birthdayValidator(birthday);
+        editedemailValidationResult = emailValidator(email);
+
+        if (editednameValidationResult && editedcodeValidationResult && editedbirthdayValidationResult && editedphoneNumberValidationResult && editedemailValidationResult) {
+            theRow.cells[0].innerHTML = name;
+            theRow.cells[1].innerHTML = code;
+            theRow.cells[2].innerHTML = birthday;
+            theRow.cells[3].innerHTML = phoneNumber;
+            theRow.cells[4].innerHTML = email;
+            theRow.cells[5].innerHTML = "<button class='tableButton' onclick=\"deleteRow(this)\">حذف اطلاعات</button>";
+            theRow.cells[6].innerHTML = "<button class='tableButton' onclick=\"editRowFunc(this)\">ویرایش اطلاعات</button>";
+            clearForm();
+        }
+    }
+
+</script>
+
+</html>
